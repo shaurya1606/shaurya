@@ -15,7 +15,7 @@ const person: Person = {
   lastName: "Srivastava",
   name: `Shaurya Srivastava`,
   role: "Undergraduate Student",
-  avatar: "/images/avatar.jpg",
+  avatar: "/images/my.jpg",
   email: "shaurya0616@gmail.com",
   location: "Asia/Kolkata", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Hindi"], // optional: Leave the array empty if you don't want to display languages
@@ -43,18 +43,18 @@ const social: Social = [
     link: "https://www.linkedin.com/in/shaurya1606",
     essential: true,
   },
-  {
-    name: "Instagram",
-    icon: "instagram",
-    link: "https://www.instagram.com/once_ui/",
-    essential: false,
-  },
-  {
-    name: "Threads",
-    icon: "threads",
-    link: "https://www.threads.com/@once_ui",
-    essential: false,
-  },
+  // {
+  //   name: "Instagram",
+  //   icon: "instagram",
+  //   link: "https://www.instagram.com/once_ui/",
+  //   essential: false,
+  // },
+  // {
+  //   name: "Threads",
+  //   icon: "threads",
+  //   link: "https://www.threads.com/@once_ui",
+  //   essential: false,
+  // },
   {
     name: "Email",
     icon: "email",
@@ -95,7 +95,7 @@ const home: Home = {
     </>
   ),
 };
-// ------ Arya ---- map - key fix
+
 const about: About = {
   path: "/about",
   label: "About",

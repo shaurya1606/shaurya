@@ -1,0 +1,404 @@
+---
+title: "LetsKraack — Distributed AI Coaching Platform"
+publishedAt: "2025-12-15"
+summary: "A scalable AI-powered coaching platform providing course generation, real-time mock interviews, resume analysis, and learning workspace built with Next.js, PostgreSQL, Gemini, AssemblyAI, and AWS Polly."
+images:
+  - "/images/projects/letskraack/cover-01.jpg"
+  - "/images/projects/letskraack/cover-02.jpg"
+team:
+  - name: "Shaurya Srivastava"
+    role: "Full Stack & System Design"
+    avatar: "/images/my.jpg"
+  - name: "Vaibhav Pandey"
+    role: "Full Stack & System Design"
+    avatar: "/images/my.jpg"
+  - name: "Akshay Pratap Singh"
+    role: "Full Stack & System Design"
+    avatar: "/images/my.jpg"
+---
+
+## Overview
+
+LetsKraack is a distributed AI coaching assistant designed to provide structured learning, interview preparation, and resume evaluation in a single unified workspace. The platform integrates AI-generated courses, voice-based mock interviews, resume ATS analysis, and a course exploration marketplace. It is implemented as a full-stack Next.js application with a serverless PostgreSQL backend and modular service-based architecture.
+
+The system emphasizes scalable backend design, low-latency AI interactions, and structured data persistence for conversational workflows.
+
+---
+
+## Problem Statement
+
+Interview preparation tools are fragmented across multiple platforms. Learners typically rely on separate systems for courses, mock interviews, resume reviews, and learning resources. This results in disconnected workflows, lack of personalized learning paths, and limited feedback quality.
+
+Existing solutions also suffer from:
+- static resume evaluation without job-context awareness
+- non-realistic chatbot-based interviews
+- slow AI content generation
+- lack of persistent learning progress
+- monolithic architecture limiting scalability
+
+LetsKraack aims to unify these workflows into a scalable AI-driven preparation platform.
+
+---
+
+## Objectives
+
+- Build a unified AI coaching workspace
+- Enable structured AI course generation
+- Provide real-time voice-based interview simulation
+- Implement job-specific resume analysis
+- Design scalable stateless backend APIs
+- Persist user learning and interview data
+- Demonstrate system design and distributed processing
+- Optimize latency for conversational AI interactions
+
+---
+
+## System Requirements
+
+### Functional Requirements
+- User authentication and profile sync
+- AI-generated course layout and content
+- Course enrollment and progress tracking
+- Voice-enabled AI mock interviews
+- Resume upload and ATS feedback
+- Feedback persistence
+- Course discovery marketplace
+- Workspace dashboard
+
+### Non-Functional Requirements
+- Low latency AI responses
+- Stateless API design
+- Scalable architecture
+- Secure authentication
+- Type-safe backend
+- Modular code organization
+- Structured database schema
+
+---
+
+## System Design
+
+LetsKraack follows a layered architecture separating UI, API handlers, services, and database.
+
+```text
+Client UI
+   ↓
+Next.js App Router
+   ↓
+API Route Handlers
+   ↓
+Service Layer (AI / Voice / Resume)
+   ↓
+Database Layer (Neon PostgreSQL)
+```
+Design principles:
+ - stateless REST APIs
+ - modular services
+ - parallel AI processing
+ - persistent conversation tracking
+ - context-based state management
+
+ ## Architecture Overview
+
+ ```text
+ User
+  ↓
+Next.js Frontend
+  ↓
+Route Handlers
+  ↓
+Service Layer
+  ├── AI Services
+  ├── Voice Services
+  ├── Resume Services
+  ↓
+PostgreSQL Database
+```
+
+The architecture separates conversational logic, content generation, and persistence to ensure maintainability.
+
+## Monorepo Structure
+```text
+/
+├── apps/
+│   └── letskraack/
+├── packages/
+│   ├── eslint-config/
+│   └── ui/
+└── README.md
+```
+The Turborepo setup allows shared linting and UI components across applications.
+
+## Technology Stack
+
+The platform utilizes a modern, type-safe stack designed for rapid development and high performance.
+
+### Frontend
+* **Framework:** Next.js 15
+* **Library:** React 18
+* **Language:** TypeScript
+* **Styling:** Tailwind CSS
+
+### Backend
+* **API Layer:** Next.js Route Handlers (App Router)
+* **ORM:** Drizzle ORM
+* **Database:** Neon PostgreSQL (Serverless)
+
+### AI & Voice
+* **LLM:** Google Gemini
+* **STT (Speech-to-Text):** AssemblyAI
+* **TTS (Text-to-Speech):** AWS Polly
+
+### Infrastructure & Utilities
+* **Authentication:** Clerk
+* **UI Components:** Radix UI & Framer Motion
+* **Form Management:** React Hook Form
+* **File Processing:** PDF.js
+* **Utilities:** Axios, UUID
+
+---
+
+## Database Design
+
+The system uses a normalized relational schema to ensure data integrity and efficient querying.
+
+### Data Model
+The database consists of five core tables:
+* **`usersTable`**
+    Acts as the primary identity store. It handles profile synchronization with Clerk and serves as the root for all relational data ownership.
+* **`coursesTable`**
+    The repository for AI-generated learning paths. It stores hierarchical course structures, metadata, and JSON-based chapter content.
+* **`enrollCoursesTable`**
+    A junction table designed to track user interaction. It monitors active enrollments, completion percentages, and individual learning progress.
+* **`discussionRoomTable`**
+    The persistence layer for the voice interview system. it stores real-time transcripts, session metadata, and the "Sliding Window" conversation context.
+* **`resumeAnalysesTable`**
+    Dedicated to resume intelligence. It archives ATS compatibility scores, extracted skill sets, and detailed feedback summaries for every uploaded PDF.
+
+### Entity Relationship
+```text
+User (1) 
+  ├── (N) Courses
+  ├── (N) Enrollments
+  ├── (N) Discussion Rooms
+  └── (N) Resume Analyses
+```
+ ### API Architecture
+
+LetsKraack's backend is powered by stateless REST APIs designed for modularity and high-speed processing.
+
+#### Core Endpoints
+
+* **`/api/generate-course-layout`**
+    Initializes the high-level structure and metadata for a new AI course.
+* **`/api/generate-course-content`**
+    Triggers parallel processing to generate detailed content for individual chapters.
+* **`/api/discussion-room`**
+    Handles CRUD operations and session state for mock interview environments.
+* **`/api/ai-chat`**
+    Manages real-time conversational context and streaming responses from Gemini.
+* **`/api/ai-feedback`**
+    Processes interview transcripts to generate actionable performance metrics.
+* **`/api/resume-analysis`**
+    Extracts data from uploaded PDFs to provide ATS scoring and job-match feedback.
+* **`/api/enroll-course`**
+    Manages the relationship between users and their learning progress.
+* **`/api/user`**
+    Syncs Clerk authentication identities with the PostgreSQL backend.
+* **`/api/voice-to-text`**
+    Generates temporary authentication tokens for AssemblyAI real-time transcription.
+
+---
+
+> **Design Philosophy:** > The architecture follows a **Stateless API** design. Every request contains the necessary context for processing, allowing the system to scale horizontally across serverless functions without managing complex server-side sessions.
+
+### AI Pipelines & Logic Flows
+
+The core of LetsKraack is built on three specialized pipelines designed for low-latency and high-accuracy feedback.
+
+#### 1. Course Generation Pipeline
+```text
+[User Input] 
+      ↓
+[Gemini Layout Generation] ➔ (JSON Structure)
+      ↓
+[Store Course Metadata] ➔ (Database Persistence)
+      ↓
+[Parallel Chapter Generation] ➔ (Concurrency Optimization)
+      ↓
+[Fetch YouTube Videos] ➔ (External API Integration)
+      ↓
+[Save Final Course Content]
+```
+Parallel generation reduces total generation latency by ~40%.
+
+#### 2. Voice Interview Flow
+```text 
+[User Speech] ➔ (Mic Input)
+      ↓
+[AssemblyAI Transcription] ➔ (STT)
+      ↓
+[Conversation Context] ➔ (Sliding Window Retrieval)
+      ↓
+[Gemini Intelligence] ➔ (Response Generation)
+      ↓
+[AWS Polly TTS] ➔ (Text-to-Speech)
+      ↓
+[Audio Playback]
+```
+
+The system uses sliding window memory (last 4 messages) to maintain context without exceeding token limits.
+
+#### 3. Resume Analysis Flow
+```text
+[Resume Upload] ➔ (PDF Parsing)
+      ↓
+[Job Description Input]
+      ↓
+[AI Structured Evaluation] ➔ (Category Scoring)
+      ↓
+[Feedback Persistence] ➔ (User Dashboard)
+
+```
+Feedback categories include ATS compatibility, tone, content, structure, and skills.
+
+#### Data Flow Diagrams
+Below is the high-level operational flow for each user journey:
+
+```text
+Learning Workflow:  [Generate Course] ──▶ [Edit Content] ──▶ [Enroll] ──▶ [Track Progress]
+
+Interview Workflow: [Create Room] ──▶ [Active Conversation] ──▶ [Save Transcript] ──▶ [Generate Feedback]
+
+Resume Workflow:    [Upload File] ──▶ [Job Context Analysis] ──▶ [Score Feedback] ──▶ [History Storage]
+```
+
+#### Scalability & Performance Architecture
+These architectural decisions allow for horizontal scaling and reduced memory usage.
+
+```text
+[Stateless REST APIs]     ──▶ Horizontal Scaling
+[Serverless PostgreSQL]   ──▶ Dynamic Resource Allocation
+[Parallel AI Generation]  ──▶ 40% Latency Reduction
+[Sliding Window Memory]   ──▶ Minimal Context Token Usage
+[Monorepo Structure]      ──▶ Modular Code Reusability
+[Cached Video Results]    ──▶ Reduced API Latency
+```
+
+#### Scalability & Performance Architecture
+These architectural decisions allow for horizontal scaling and reduced memory usage.
+
+Plaintext
+[Stateless REST APIs]     ──▶ Horizontal Scaling
+[Serverless PostgreSQL]   ──▶ Dynamic Resource Allocation
+[Parallel AI Generation]  ──▶ 40% Latency Reduction
+[Sliding Window Memory]   ──▶ Minimal Context Token Usage
+[Monorepo Structure]      ──▶ Modular Code Reusability
+[Cached Video Results]    ──▶ Reduced API Latency
+
+## Performance Optimizations
+ - Parallel chapter generation: Non-blocking content creation.
+
+ - JSON-based structured AI output: Ensures strict parsing and UI consistency.
+
+ - Serverless database connections: Optimized for high-concurrency bursts.
+
+ - Minimal context token usage: Efficient prompt engineering for cost-effective scaling.
+## Methodology
+
+The development of LetsKraack followed a six-phase iterative lifecycle, moving from architectural foundations to specialized AI feature integration.
+
+```text
+[PHASE 1] ──▶ Requirement analysis and architecture design
+      ↓
+[PHASE 2] ──▶ Database schema and authentication integration
+      ↓
+[PHASE 3] ──▶ AI course generation implementation
+      ↓
+[PHASE 4] ──▶ Voice interview system integration
+      ↓
+[PHASE 5] ──▶ Resume analysis pipeline
+      ↓
+[PHASE 6] ──▶ Performance optimization and refactoring
+```
+
+## Challenges & Solutions
+
+Navigating the intersection of real-time voice and high-volume AI generation presented several technical hurdles.
+
+#### AI JSON Parsing
+* **The Problem:** Gemini responses often included unwanted Markdown formatting (like ` ```json ` fences), causing `JSON.parse()` to fail.
+* **The Solution:** Implemented a robust utility to strip markdown fences and sanitize the raw string before parsing it into the application state.
+
+#### Latency in Course Generation
+* **The Problem:** Generating a full course with 10+ chapters sequentially took upwards of 30 seconds, leading to poor UX.
+* **The Solution:** Developed a parallelized generation pipeline using `Promise.all()` to trigger chapter content generation and YouTube video fetching concurrently.
+
+#### Voice Synchronization
+* **The Problem:** Significant audio lag occurred between user speech and AI playback, breaking the immersion of a "real" interview.
+* **The Solution:** Switched to streaming transcription with AssemblyAI and optimized Gemini prompts to generate concise, high-impact responses for faster TTS conversion.
+
+#### Token Usage
+* **The Problem:** As mock interviews progressed, the conversation context grew too large, increasing both latency and API costs.
+* **The Solution:** Implemented a **Sliding Window Memory** architecture that only retains and sends the last four messages to the AI, maintaining relevance while capping token overhead.
+
+---
+
+### Technical Breakdown of Optimizations
+
+```text
+CHALLENGE               ➔   IMPLEMENTED OPTIMIZATION
+────────────────────────────────────────────────────────
+Markdown Noise          ➔   Regex Content Sanitization
+Sequential Latency      ➔   Parallel Worker Pipelines
+Voice Audio Lag         ➔   Streaming STT & Concise TTS
+Context Inflation       ➔   Sliding Window Memory (n=4)
+```
+
+## Results & Metrics
+
+The architectural optimizations implemented during development led to significant improvements in user experience and system efficiency.
+
+```text
+[ PERFORMANCE BENCHMARKS ]
+
+Metric                          Result / Value
+────────────────────────────────────────────────────────
+Course Generation Latency  ──▶  Reduced by ~40%
+Interview Response Lag     ──▶  500–2000 ms (Real-time)
+AI Evaluation Latency      ──▶  ~700 ms (Avg. per request)
+REST APIs Implemented      ──▶  9 Managed Endpoints
+Database Complexity        ──▶  5 Normalized Tables
+```
+
+---
+
+## Key Contributions
+
+The development of LetsKraack involved end-to-end ownership of the AI lifecycle and backend infrastructure.
+
+* **Designed Distributed AI Pipeline** – Built a parallelized course generation engine using Gemini.
+* **Real-time Voice System** – Integrated STT/TTS loops for low-latency interview simulations.
+* **Structured ATS Analysis** – Engineered a contextual resume scoring system with PDF parsing.
+* **Normalized Database Schema** – Designed a 5-table PostgreSQL architecture for high data integrity.
+* **Stateless REST Backend** – Developed 9 modular API endpoints using Next.js Route Handlers.
+* **AI Orchestration** – Seamlessly integrated Google Gemini, AssemblyAI, and AWS Polly.
+* **Unified Workspace** – Created a cohesive UI for learning, interviewing, and career preparation.
+
+---
+
+## Future Improvements
+
+The roadmap for LetsKraack focuses on deepening AI immersion, enhancing real-time connectivity, and scaling data retrieval capabilities.
+
+```text
+[ INFRASTRUCTURE ] ──▶ Background Job Queues & WebRTC Interview Rooms
+         │
+[ INTELLIGENCE ]   ──▶ Multi-agent Simulation & Semantic Vector Search
+         │
+[ PERSONALIZATION ] ──▶ RAG-based Tutoring & User Analytics Dashboards
+```
+
+#### Final Outcome
+
+LetsKraack successfully delivers a scalable AI coaching platform integrating course generation, interview simulation, and resume analysis into a single system. The project demonstrates full-stack engineering, system design, AI integration, and distributed workflow orchestration suitable for production-scale deployment.
