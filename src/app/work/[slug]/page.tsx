@@ -3,10 +3,7 @@ import { getPosts } from "@/utils/utils";
 import {
   Meta,
   Schema,
-  AvatarGroup,
-  Button,
   Column,
-  Flex,
   Heading,
   Media,
   Text,
@@ -20,6 +17,7 @@ import { formatDate } from "@/utils/formatDate";
 import { ScrollToHash, CustomMDX } from "@/components";
 import { Metadata } from "next";
 import { Projects } from "@/components/work/Projects";
+import { ProjectTags } from "@/components/work/project";
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const posts = getPosts(["src", "app", "work", "projects"]);
@@ -47,7 +45,9 @@ export async function generateMetadata({
     title: post.metadata.title,
     description: post.metadata.summary,
     baseURL: baseURL,
-    image: post.metadata.image || `/api/og/generate?title=${post.metadata.title}`,
+    image:
+      post.metadata.images?.[0] ||
+      `/api/og/generate?title=${post.metadata.title}`,
     path: `${work.path}/${post.slug}`,
   });
 }
@@ -62,16 +62,29 @@ export default async function Project({
     ? routeParams.slug.join("/")
     : routeParams.slug || "";
 
-  let post = getPosts(["src", "app", "work", "projects"]).find((post) => post.slug === slugPath);
+  let post = getPosts(["src", "app", "work", "projects"]).find(
+    (post) => post.slug === slugPath,
+  );
 
   if (!post) {
     notFound();
   }
 
-  const avatars =
-    post.metadata.team?.map((person) => ({
-      src: person.avatar,
-    })) || [];
+  const heroImage =
+    post.metadata.images?.[0] ||
+    post.metadata.media?.find((item) => item.type === "image")?.src ||
+    "";
+
+  const publishedLabel = post.metadata.publishedAt
+    ? `Published: ${formatDate(post.metadata.publishedAt)}`
+    : undefined;
+
+  const timeframeLabel =
+    post.metadata.startDate && post.metadata.endDate
+      ? `Timeline: ${formatDate(post.metadata.startDate)} – ${formatDate(post.metadata.endDate)}`
+      : post.metadata.startDate
+        ? `Timeline: ${formatDate(post.metadata.startDate)}`
+        : undefined;
 
   return (
     <Column as="section" maxWidth="m" horizontal="center" gap="l">
@@ -84,7 +97,8 @@ export default async function Project({
         datePublished={post.metadata.publishedAt}
         dateModified={post.metadata.publishedAt}
         image={
-          post.metadata.image || `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`
+          post.metadata.images?.[0] ||
+          `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`
         }
         author={{
           name: person.name,
@@ -96,30 +110,60 @@ export default async function Project({
         <SmartLink href="/work">
           <Text variant="label-strong-m">Projects</Text>
         </SmartLink>
-        <Text variant="body-default-xs" onBackground="neutral-weak" marginBottom="12">
-          {post.metadata.publishedAt && formatDate(post.metadata.publishedAt)}
-        </Text>
-        <Heading variant="display-strong-m">{post.metadata.title}</Heading>
-      </Column>
-      <Row marginBottom="32" horizontal="center">
-        <Row gap="16" vertical="center">
-          {post.metadata.team && <AvatarGroup reverse avatars={avatars} size="s" />}
-          <Text variant="label-default-m" onBackground="brand-weak">
-            {post.metadata.team?.map((member, idx) => (
-              <span key={idx}>
-                {idx > 0 && (
-                  <Text as="span" onBackground="neutral-weak">
-                    ,{" "}
+        <Heading variant="display-strong-m" align="center">
+          {post.metadata.title}
+        </Heading>
+        {(publishedLabel || timeframeLabel) && (
+          <Column gap="4" align="center" marginBottom="4">
+            {publishedLabel && (
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                {publishedLabel}
+              </Text>
+            )}
+            {timeframeLabel && (
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                {timeframeLabel}
+              </Text>
+            )}
+          </Column>
+        )}
+        {post.metadata.tags?.length ? (
+          <Column gap="8" align="center">
+            <Text variant="label-strong-m">Tech stack</Text>
+            <ProjectTags tags={post.metadata.tags} />
+          </Column>
+        ) : null}
+        {post.metadata.team?.length ? (
+          <Column gap="8" align="center">
+            <Text variant="label-strong-m">Contributors</Text>
+            <Row gap="12" wrap horizontal="center">
+              {post.metadata.team.map((member, idx) => (
+                <Row key={`${member.name}-${idx}`} gap="8" vertical="center">
+                  {member.avatar && (
+                    <Avatar
+                      src={member.avatar}
+                      size="s"
+                      aria-label={member.name}
+                    />
+                  )}
+                  <Text variant="label-default-s" onBackground="brand-weak">
+                    <SmartLink href={member.linkedIn}>{member.name}</SmartLink>
                   </Text>
-                )}
-                <SmartLink href={member.linkedIn}>{member.name}</SmartLink>
-              </span>
-            ))}
-          </Text>
-        </Row>
-      </Row>
-      {post.metadata.images.length > 0 && (
-        <Media priority aspectRatio="16 / 9" radius="m" alt="image" src={post.metadata.images[0]} />
+                </Row>
+              ))}
+            </Row>
+          </Column>
+        ) : null}
+      </Column>
+      <Row marginBottom="16" />
+      {heroImage && (
+        <Media
+          priority
+          aspectRatio="16 / 9"
+          radius="m"
+          alt={post.metadata.title}
+          src={heroImage}
+        />
       )}
       <Column style={{ margin: "auto" }} as="article" maxWidth="xs">
         <CustomMDX source={post.content} />

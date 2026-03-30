@@ -16,6 +16,7 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
+import Link from "next/link";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -40,14 +41,39 @@ export default function About() {
       items: about.work.experiences.map((experience) => experience.company),
     },
     {
+      title: about.technical.title,
+      display: about.technical.display,
+      items: about.technical.skills.map((skill) => skill.title),
+    },
+    {
+      title: about.projects?.title ?? "Projects",
+      display: Boolean(about.projects?.display),
+      items: about.projects?.items.map((item) => item.name) ?? [],
+    },
+    {
       title: about.studies.title,
       display: about.studies.display,
       items: about.studies.institutions.map((institution) => institution.name),
     },
     {
-      title: about.technical.title,
-      display: about.technical.display,
-      items: about.technical.skills.map((skill) => skill.title),
+      title: about.achievements?.title ?? "Achievements",
+      display: Boolean(about.achievements?.display),
+      items: about.achievements?.items.map((item) => item.title) ?? [],
+    },
+    {
+      title: about.certifications?.title ?? "Certifications",
+      display: Boolean(about.certifications?.display),
+      items: about.certifications?.items.map((item) => item.name) ?? [],
+    },
+    {
+      title: about.coCurricular?.title ?? "Co-curricular",
+      display: Boolean(about.coCurricular?.display),
+      items: about.coCurricular?.items.map((item) => item.title) ?? [],
+    },
+    {
+      title: about.interests?.title ?? "Interests",
+      display: Boolean(about.interests?.display),
+      items: about.interests?.items ?? [],
     },
   ];
   return (
@@ -296,34 +322,6 @@ export default function About() {
             </>
           )}
 
-          {about.studies.display && (
-            <>
-              <Heading
-                as="h2"
-                id={about.studies.title}
-                variant="display-strong-s"
-                marginBottom="m"
-              >
-                {about.studies.title}
-              </Heading>
-              <Column fillWidth gap="l" marginBottom="40">
-                {about.studies.institutions.map((institution) => (
-                  <Column key={institution.name} fillWidth gap="4">
-                    <Text id={institution.name} variant="heading-strong-l">
-                      {institution.name}
-                    </Text>
-                    <Text
-                      variant="heading-default-xs"
-                      onBackground="neutral-weak"
-                    >
-                      {institution.description}
-                    </Text>
-                  </Column>
-                ))}
-              </Column>
-            </>
-          )}
-
           {about.technical.display && (
             <>
               <Heading
@@ -340,9 +338,14 @@ export default function About() {
                     <Text id={skill.title} variant="heading-strong-l">
                       {skill.title}
                     </Text>
-                    <Text variant="body-default-m" onBackground="neutral-weak">
-                      {skill.description}
-                    </Text>
+                    {skill.description && (
+                      <Text
+                        variant="body-default-m"
+                        onBackground="neutral-weak"
+                      >
+                        {skill.description}
+                      </Text>
+                    )}
                     {skill.tags && skill.tags.length > 0 && (
                       <Row wrap gap="8" paddingTop="8">
                         {skill.tags.map((tag, tagIndex) => (
@@ -380,6 +383,208 @@ export default function About() {
                   </Column>
                 ))}
               </Column>
+            </>
+          )}
+
+          {about.projects?.display && about.projects.items.length > 0 && (
+            <>
+              <Heading
+                as="h2"
+                id={about.projects.title}
+                variant="display-strong-s"
+                marginBottom="m"
+                marginTop="40"
+              >
+                {about.projects.title}
+              </Heading>
+              <Column fillWidth gap="24" marginBottom="40">
+                {about.projects.items.map((project) => (
+                  <Column
+                    key={project.slug}
+                    data-border="rounded"
+                    border="neutral-alpha-medium"
+                    padding="20"
+                    gap="12"
+                    background="surface"
+                  >
+                    <Row horizontal="between" vertical="center" wrap gap="12">
+                      <Heading
+                        as="h3"
+                        id={project.name}
+                        variant="heading-strong-l"
+                      >
+                        <Link href={`/work/${project.slug}`}>
+                          {project.name}
+                        </Link>
+                      </Heading>
+                      {project.timeframe && (
+                        <Tag size="m" onBackground="brand-weak">
+                          {project.timeframe}
+                        </Tag>
+                      )}
+                    </Row>
+                    {project.techStack && (
+                      <Text
+                        variant="body-default-m"
+                        onBackground="neutral-weak"
+                      >
+                        {project.techStack}
+                      </Text>
+                    )}
+                    {project.highlights && project.highlights.length > 0 && (
+                      <Column as="ul" gap="8">
+                        {project.highlights.map((point, idx) => (
+                          <Text as="li" key={`${project.slug}-point-${idx}`}>
+                            {point}
+                          </Text>
+                        ))}
+                      </Column>
+                    )}
+                    {(project.links?.github || project.links?.live) && (
+                      <Row gap="12" wrap paddingTop="4">
+                        {project.links.github && (
+                          <Button
+                            size="s"
+                            variant="secondary"
+                            prefixIcon="github"
+                            href={project.links.github}
+                          >
+                            GitHub
+                          </Button>
+                        )}
+                        {project.links.live && (
+                          <Button
+                            size="s"
+                            variant="secondary"
+                            prefixIcon="external"
+                            href={project.links.live}
+                          >
+                            Live
+                          </Button>
+                        )}
+                      </Row>
+                    )}
+                  </Column>
+                ))}
+              </Column>
+            </>
+          )}
+
+          {about.studies.display && (
+            <>
+              <Heading
+                as="h2"
+                id={about.studies.title}
+                variant="display-strong-s"
+                marginBottom="m"
+              >
+                {about.studies.title}
+              </Heading>
+              <Column fillWidth gap="l" marginBottom="40">
+                {about.studies.institutions.map((institution) => (
+                  <Column key={institution.name} fillWidth gap="4">
+                    <Text id={institution.name} variant="heading-strong-l">
+                      {institution.name}
+                    </Text>
+                    <Text
+                      variant="heading-default-xs"
+                      onBackground="neutral-weak"
+                    >
+                      {institution.description}
+                    </Text>
+                  </Column>
+                ))}
+              </Column>
+            </>
+          )}
+
+          {about.achievements?.display && (
+            <>
+              <Heading
+                as="h2"
+                id={about.achievements.title}
+                variant="display-strong-s"
+                marginBottom="m"
+              >
+                {about.achievements.title}
+              </Heading>
+              <Column as="ul" fillWidth gap="m" marginBottom="40">
+                {about.achievements.items.map((item, index) => (
+                  <Text as="li" key={`${item.title}-${index}`}>
+                    {item.title}
+                  </Text>
+                ))}
+              </Column>
+            </>
+          )}
+
+          {about.certifications?.display && (
+            <>
+              <Heading
+                as="h2"
+                id={about.certifications.title}
+                variant="display-strong-s"
+                marginBottom="m"
+              >
+                {about.certifications.title}
+              </Heading>
+              <Column fillWidth gap="m" marginBottom="40">
+                {about.certifications.items.map((cert, index) => (
+                  <Column key={`${cert.name}-${index}`} gap="4">
+                    <Text variant="heading-strong-m">{cert.name}</Text>
+                    <Row gap="8" vertical="center" wrap>
+                      <Text
+                        variant="body-default-m"
+                        onBackground="neutral-weak"
+                      >
+                        {cert.issuer}
+                      </Text>
+                      {cert.date && <Tag size="m">{cert.date}</Tag>}
+                      {cert.link && <Link href={cert.link}>Verify</Link>}
+                    </Row>
+                  </Column>
+                ))}
+              </Column>
+            </>
+          )}
+
+          {about.coCurricular?.display && (
+            <>
+              <Heading
+                as="h2"
+                id={about.coCurricular.title}
+                variant="display-strong-s"
+                marginBottom="m"
+              >
+                {about.coCurricular.title}
+              </Heading>
+              <Column as="ul" fillWidth gap="m" marginBottom="40">
+                {about.coCurricular.items.map((item, index) => (
+                  <Text as="li" key={`${item.title}-${index}`}>
+                    {item.title}
+                  </Text>
+                ))}
+              </Column>
+            </>
+          )}
+
+          {about.interests?.display && (
+            <>
+              <Heading
+                as="h2"
+                id={about.interests.title}
+                variant="display-strong-s"
+                marginBottom="m"
+              >
+                {about.interests.title}
+              </Heading>
+              <Row wrap gap="8" marginBottom="40">
+                {about.interests.items.map((interest, index) => (
+                  <Tag key={`${interest}-${index}`} size="l">
+                    {interest}
+                  </Tag>
+                ))}
+              </Row>
             </>
           )}
         </Column>

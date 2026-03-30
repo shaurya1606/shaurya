@@ -1,0 +1,246 @@
+---
+title: "Sarion — Multi-Drone AI Disaster Response System"
+publishedAt: "2025-12-15"
+startDate: "2025-05-01"
+endDate: "2025-07-31"
+summary: "Multi-drone AI disaster response system with real-time survivor detection, autonomous delivery routing, and mission coordination."
+bullets:
+  - "Multi-threaded YOLO detection pipeline achieving ~20 FPS real-time inference."
+  - "Autonomous multi-drone coordination using TSP route planning and A* pathfinding."
+  - "High-concurrency FastAPI backend supporting 1-second telemetry polling."
+  - "Offline simulation engine with multi-agent delivery and mission replay video generation."
+media:
+  - type: "image"
+    src: "/images/projects/letskraack/cover-01.jpg"
+    alt: "LetsKraack dashboard overview"
+  - type: "image"
+    src: "/images/projects/letskraack/cover-02.jpg"
+    alt: "AI interview workspace"
+contributors:
+  - name: "Shaurya Srivastava"
+    avatar: "/images/my.jpg"
+    link: "https://www.linkedin.com/in/shaurya1606"
+tags:
+      - "AI"
+      - "Python"
+      - "FastAPI"
+      - "Uvicorn"
+      - "YOLO"
+      - "PyTorch"
+      - "OpenCV"
+      - "NumPy"
+      - "SQLite"
+      - "Computer Vision"
+      - "A* Search"
+      - "Drone"
+      - "Simulation"
+cta:
+  caseStudy: true
+  live: false
+  github: true
+links:
+  live: ""
+  github: "https://github.com/shaurya1606/yukti-disaster-drone-management-system"
+---
+
+## Overview
+
+Sarion is a multi-drone AI disaster response platform designed to automate survivor detection, coordinate drone fleets, and simulate rescue missions in real time. The system integrates computer vision, autonomous navigation, and distributed mission coordination into a unified control dashboard.
+
+The platform processes live video feeds using a trained YOLO model, detects survivors, logs geospatial coordinates, and deploys delivery drones using optimized routing algorithms. It also includes an offline simulation engine capable of generating mission replay videos using A* pathfinding and multi-agent coordination.
+
+---
+
+## Problem Statement
+
+Disaster response operations often rely on manual scouting and uncoordinated rescue workflows, resulting in delayed survivor identification and inefficient resource allocation.
+
+Existing limitations include:
+- manual aerial monitoring
+- lack of autonomous coordination
+- inefficient routing of rescue drones
+- absence of real-time telemetry dashboards
+- no offline mission simulation capability
+- redundant detection and duplicate data
+
+Sarion addresses these issues through AI-driven detection and autonomous drone coordination.
+
+---
+
+## Objectives
+
+- Build AI-powered survivor detection system
+- Implement autonomous multi-drone coordination
+- Design real-time telemetry dashboard
+- Optimize drone routing using pathfinding algorithms
+- Simulate disaster missions offline
+- Reduce redundant detections using spatial deduplication
+- Enable scalable backend for concurrent agents
+- Demonstrate real-time mission orchestration
+
+---
+
+## System Design
+
+Sarion follows a layered architecture separating detection, orchestration, and simulation components.
+
+```
+Camera Input
+      ↓
+YOLO Detection Pipeline
+      ↓
+Mission Coordinator
+      ↓
+Drone Control Layer
+      ↓
+Routing Algorithms (TSP / A*)
+      ↓
+Database & Telemetry
+      ↓
+FastAPI Backend
+      ↓
+Dashboard UI
+```
+
+**Architecture Overview**
+
+```
+User Dashboard
+      ↓
+FastAPI Backend
+      ↓
+Mission Coordinator
+      ├── Video Detection Service
+      ├── Drone Simulation Engine
+      ├── Route Planner
+      └── Database Layer
+             ↓
+Drone Fleet (Scout + Delivery)
+```
+
+**Technology Stack**
+- Backend: Python, FastAPI, Uvicorn, SQLite
+- AI & CV: YOLO (PyTorch), OpenCV, NumPy
+- Algorithms: A* search, Travelling Salesman Problem (TSP), spatial deduplication
+- Simulation: Multi-threaded physics loop, grid-based pathfinding, video rendering pipeline
+
+**Core AI Detection Pipeline**
+
+```
+Video Stream
+      ↓
+Frame Reader Thread
+      ↓
+YOLO Inference
+      ↓
+Person Detection
+      ↓
+Confidence Filtering
+      ↓
+GPS Simulation
+      ↓
+Database Logging
+      ↓
+Dashboard Update
+```
+
+The multi-threaded pipeline eliminates blocking operations and enables real-time inference.
+
+**Drone Coordination Pipeline**
+
+```
+Detected Survivors
+      ↓
+Fetch Survivor Coordinates
+      ↓
+TSP Route Optimization
+      ↓
+Deploy Delivery Drone
+      ↓
+Goto Location
+      ↓
+Drop Kit Simulation
+      ↓
+Mark Delivered
+```
+
+**Simulation Engine Flow**
+
+```
+Upload Aerial Image
+      ↓
+YOLO Detection
+      ↓
+Generate Coverage Path
+      ↓
+Spawn Delivery Drones
+      ↓
+A* Pathfinding
+      ↓
+Delivery Execution
+      ↓
+Video Rendering
+```
+
+**Database Design**
+- Survivor: id, lat, lon, confidence, status, detected_at
+- MissionLog: id, timestamp, level, message, drone_id
+
+**API Architecture**
+- /api/video_feed
+- /api/status
+- /api/mission/start_scan
+- /api/mission/stop_scan
+- /api/mission/deploy_delivery
+- /api/logs
+- /api/settings
+- /api/simulation/run
+
+**Performance Optimizations**
+- Multi-threaded detection pipeline
+- Spatial deduplication of survivors
+- Asynchronous telemetry polling
+- Background drone physics simulation
+- Efficient A* grid pathfinding
+- YOLO confidence threshold filtering
+
+**Methodology**
+1. System architecture design
+2. YOLO model training
+3. Detection pipeline implementation
+4. Drone simulation layer
+5. Routing algorithm integration
+6. Dashboard and API development
+7. Simulation engine
+8. Performance optimization
+
+**Results & Metrics**
+- YOLO training epochs: 50
+- mAP@50: 44.7%
+- Precision: 65.8%
+- Inference speed: ~20 FPS
+- Telemetry polling interval: 1 second
+- Redundant data reduction: ~30%
+- REST APIs implemented: 8
+
+**Key Contributions**
+- Designed multi-drone coordination system
+- Implemented YOLO-based survivor detection
+- Built A* pathfinding for delivery routing
+- Developed TSP-based route optimization
+- Engineered multi-threaded detection pipeline
+- Created real-time telemetry dashboard
+- Implemented offline mission simulation engine
+- Developed high-concurrency FastAPI backend
+
+**Future Improvements**
+- Real drone MAVLink integration
+- Swarm coordination algorithms
+- 3D terrain mapping
+- Live satellite feed support
+- Cloud-based mission scaling
+- Edge deployment on Jetson
+
+**Final Outcome**
+
+Sarion demonstrates a scalable AI-powered disaster response system capable of real-time survivor detection, autonomous multi-drone coordination, and mission simulation. The project highlights expertise in computer vision, system design, concurrent backend development, and algorithmic optimization for real-world rescue applications.

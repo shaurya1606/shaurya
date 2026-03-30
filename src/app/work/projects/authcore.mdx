@@ -1,0 +1,242 @@
+---
+title: "AuthCore — Scalable Authentication & RBAC System"
+publishedAt: "2025-12-20"
+startDate: "2025-01-01"
+endDate: "2025-03-31"
+summary: "Production-grade authentication system with OAuth, RBAC, JWT sessions, and multi-layered security pipeline."
+bullets:
+  - "Architected multi-provider authentication supporting OAuth (Google, GitHub, LinkedIn) and credentials login with RBAC across USER, ADMIN, SUPER_ADMIN roles."
+  - "Designed normalized 6-table PostgreSQL schema using Drizzle ORM with cascade-delete integrity and JWT-based stateless sessions."
+  - "Implemented multi-stage security pipeline including bcrypt hashing, UUID token workflows, and TOTP-style 2FA with Edge middleware route protection."
+media:
+  - type: "image"
+    src: "/images/projects/letskraack/cover-01.jpg"
+    alt: "LetsKraack dashboard overview"
+  - type: "image"
+    src: "/images/projects/letskraack/cover-02.jpg"
+    alt: "AI interview workspace"
+contributors:
+  - name: "Shaurya Srivastava"
+    avatar: "/images/my.jpg"
+tags:
+  - "Authentication"
+  - "Next.js"
+  - "TypeScript"
+  - "PostgreSQL"
+  - "JWT"
+  - "OAuth"
+  - "RBAC"
+  - "Drizzle ORM"
+  - "NeonDB"
+  - "Security"
+cta:
+  caseStudy: true
+  live: false
+  github: true
+links:
+  github: "https://github.com/shaurya1606"
+---
+
+## Overview
+
+AuthCore is a production-grade authentication and authorization system designed to support multi-provider login, role-based access control, and secure session handling. The system integrates OAuth providers, credentials-based login, two-factor authentication, and token-based workflows within a scalable layered architecture.
+
+The project emphasizes strong security primitives, serverless database infrastructure, and stateless JWT session management suitable for modern SaaS applications.
+
+---
+
+## Problem Statement
+
+Modern applications require secure authentication with flexible authorization. Many starter implementations lack proper RBAC, token lifecycle management, and scalable architecture. This results in:
+
+- insecure session handling
+- weak password storage
+- no role-based permission isolation
+- absence of two-factor authentication
+- monolithic auth logic
+- poor token lifecycle management
+- limited scalability for serverless deployments
+
+AuthCore addresses these issues through a modular, security-first authentication architecture.
+
+---
+
+## Objectives
+
+- Build multi-provider authentication
+- Implement RBAC authorization
+- Support JWT-based stateless sessions
+- Add secure password hashing
+- Enable two-factor authentication
+- Design token-based verification workflows
+- Implement Edge middleware protection
+- Create scalable layered architecture
+- Maintain type-safe database operations
+
+---
+
+## System Design
+
+AuthCore follows a layered backend architecture separating routing, business logic, data access, and persistence.
+
+```
+Client UI
+   ↓
+Next.js App Router
+   ↓
+API Route Handlers
+   ↓
+Service Layer
+   ↓
+Query Layer (DAL)
+   ↓
+Drizzle ORM
+   ↓
+Neon PostgreSQL
+```
+
+Design principles:
+```text
+stateless session management
+separation of concerns
+secure token lifecycle
+layered architecture
+serverless database integration
+```
+
+**Architecture Overview**
+
+```
+User
+   ↓
+Next.js Frontend
+   ↓
+Route Handlers
+   ↓
+Service Layer
+   ├── Auth Service
+   ├── Token Service
+   ├── Email Service
+   ↓
+Query Layer
+   ↓
+PostgreSQL Database
+```
+
+**Technology Stack**
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS, Radix UI, Framer Motion
+- Backend: NextAuth (Auth.js v5), JWT session strategy, Edge middleware
+- Database: PostgreSQL (Neon serverless), Drizzle ORM
+- Security: bcrypt hashing, UUID token generation, crypto-secure OTP, RBAC authorization
+- Validation & Forms: Zod, React Hook Form
+- Email: Resend API with HTML transactional templates
+
+**Database Design**
+- Tables: usersTable, accountsTable, verificationTokensTable, resetPasswordTokensTable, twoFactorTokensTable, twoFactorConfirmationTable
+- Entity relationship: User (1) → (N) Accounts, Verification Tokens, Reset Tokens, 2FA Tokens, 2FA Confirmations
+- Design decisions: composite primary keys, cascade delete, referential integrity, typed inference via Drizzle ORM
+
+**API Architecture (structured workflow)**
+1) POST /api/auth/signup — user registration
+2) POST /api/auth/login — login with 2FA
+3) POST /api/auth/verify-email — email verification
+4) POST /api/auth/reset-password — issue reset token
+5) POST /api/auth/new-password — update password with token
+6) POST /api/settings — profile update
+7) ALL /api/auth/[...nextauth] — Auth.js handler
+
+**Security Architecture**
+- Password security: bcrypt hashing (salt rounds = 10), credential protection
+- Two-factor auth: 6-digit OTP, crypto-secure generation, 10-minute expiry
+- Email verification: UUID v4 tokens, 1-hour expiry, single-use validation
+- Password reset: token-gated flow, TTL enforcement, replay protection
+- RBAC authorization: USER, ADMIN, SUPER_ADMIN roles
+
+**Middleware Protection**
+
+```
+Request
+   ↓
+Edge Middleware
+   ↓
+Auth Check
+   ↓
+Allow / Redirect
+```
+
+**Email Workflow**
+- Verification email
+- Reset password email
+- Two-factor OTP email
+- Features: HTML + plaintext, reusable templates, async sending, graceful failure handling
+
+**Authentication Flow**
+
+```
+User Login
+   ↓
+Credential / OAuth
+   ↓
+Password Validation
+   ↓
+2FA Check
+   ↓
+JWT Generation
+   ↓
+Session Established
+```
+
+**Authorization Flow**
+
+```
+Request
+   ↓
+JWT Validation
+   ↓
+Role Extraction
+   ↓
+Permission Check
+   ↓
+Route Access Granted
+```
+
+**Performance & Scalability**
+- Stateless JWT sessions → horizontal scaling
+- Serverless PostgreSQL → dynamic resource allocation
+- Layered architecture → maintainability
+- Edge middleware → low-latency protection
+- Type-safe ORM → compile-time safety
+
+**Challenges & Solutions**
+- Token lifecycle: enforce single-use tokens with TTL
+- OAuth vs credentials: diverged flows in signIn callback
+- Session synchronization: refresh JWT payload on validation
+- Serverless DB access: use Neon HTTP driver to avoid pooling limits
+
+**Results & Metrics**
+- Authentication providers: 4
+- RBAC roles: 3
+- Database tables: 6
+- REST endpoints: 6
+- Security layers: 5
+- Session strategy: JWT stateless
+
+**Key Contributions**
+- Multi-provider OAuth authentication
+- RBAC authorization system
+- JWT stateless session management
+- Two-factor authentication pipeline
+- Token-based email verification
+- Secure password reset workflow
+- Layered backend architecture
+- Edge middleware route protection
+
+**Future Improvements**
+- Refresh token rotation
+- Redis session cache
+- WebAuthn passkeys
+- Activity logging
+
+**Final Outcome**
+
+AuthCore delivers a scalable authentication and authorization system with multi-provider login, RBAC permission control, JWT-based sessions, and production-grade security pipelines. The project demonstrates backend system design, security engineering, and scalable architecture suitable for SaaS platforms.

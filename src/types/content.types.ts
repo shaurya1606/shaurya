@@ -63,6 +63,24 @@ export type Social = Array<{
   essential?: boolean;
 }>;
 
+export type ProjectMediaItem = {
+  type: "image" | "video";
+  src: string;
+  alt?: string;
+};
+
+export type ProjectContributor = {
+  name: string;
+  avatar: string;
+  link?: string;
+};
+
+export type ProjectCTAConfig = {
+  caseStudy?: boolean;
+  live?: boolean;
+  github?: boolean;
+};
+
 /**
  * Base interface for page configuration with common properties.
  */
@@ -98,6 +116,17 @@ export interface Home extends BasePageConfig {
     display: boolean;
     title: React.ReactNode;
     href: string;
+  };
+  /** Work section configuration on home */
+  workSection?: {
+    title: string;
+    featuredSlugs?: string[];
+  };
+  /** Blog section configuration on home */
+  blogSection?: {
+    title: string;
+    count?: number;
+    ctaLabel?: string;
   };
   /** The sub text which appears below the headline */
   subline: React.ReactNode;
@@ -208,6 +237,59 @@ export interface About extends BasePageConfig {
         height: number;
       }>;
     }>;
+  };
+  /** Projects selection section */
+  projects?: {
+    display: boolean;
+    title: string;
+    items: Array<{
+      slug: string;
+      name: string;
+      timeframe?: string;
+      techStack?: string;
+      highlights?: React.ReactNode[];
+      links?: {
+        github?: string;
+        live?: string;
+      };
+    }>;
+  };
+  /** Achievements section */
+  achievements?: {
+    display: boolean;
+    title: string;
+    items: Array<{
+      title: string;
+      description?: React.ReactNode;
+      date?: string;
+    }>;
+  };
+  /** Certifications section */
+  certifications?: {
+    display: boolean;
+    title: string;
+    items: Array<{
+      name: string;
+      issuer: string;
+      date?: string;
+      link?: string;
+    }>;
+  };
+  /** Co-curricular section */
+  coCurricular?: {
+    display: boolean;
+    title: string;
+    items: Array<{
+      title: string;
+      description?: React.ReactNode;
+      type?: "publication" | "sports" | "activity";
+    }>;
+  };
+  /** Interests / hobbies section */
+  interests?: {
+    display: boolean;
+    title: string;
+    items: string[];
   };
 }
 
