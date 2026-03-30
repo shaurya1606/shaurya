@@ -34,9 +34,11 @@ type Metadata = {
   startDate?: string;
   endDate?: string;
   summary: string;
+  image?: string;
   images?: string[];
   media?: MediaItem[];
   tags?: string[];
+  tag?: string;
   team: Team[];
   contributors?: Contributor[];
   bullets?: string[];
@@ -73,9 +75,11 @@ function readMDXFile(filePath: string) {
     startDate: data.startDate,
     endDate: data.endDate,
     summary: data.summary || "",
+    image: data.image,
     images: data.images || [],
     media: data.media,
     tags: data.tags,
+    tag: data.tag,
     team: data.team || data.contributors || [],
     contributors: data.contributors,
     bullets: data.bullets,
@@ -101,6 +105,7 @@ function getMDXData(dir: string) {
 }
 
 export function getPosts(customPath = ["", "", "", ""]) {
-  const postsDir = path.join(process.cwd(), ...customPath);
+  // turbopack: scope dynamic cwd usage to avoid tracing entire project
+  const postsDir = path.join(/*turbopackIgnore: true*/ process.cwd(), ...customPath);
   return getMDXData(postsDir);
 }
