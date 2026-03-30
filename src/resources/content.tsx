@@ -131,7 +131,7 @@ const about: About = {
   },
   intro: {
     display: true,
-    title: "Introduction",
+    title: "Summary",
     description: (
       <>
         Computer Science undergraduate focused on backend engineering,
@@ -232,7 +232,7 @@ const about: About = {
   },
   studies: {
     display: true,
-    title: "Studies",
+    title: "Education",
     institutions: [
       {
         name: "Pranveer Singh Institute of Technology, Kanpur",
@@ -330,7 +330,7 @@ const about: About = {
   },
   technical: {
     display: true,
-    title: "Technical skills",
+    title: "Skills",
     skills: [
       {
         title: "Core CS",
